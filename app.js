@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 // Initialize express app
@@ -20,6 +21,19 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // Routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/user', userRoutes);
+
+const authRoutes = require('./routes/authRoutes');
+const companiesRoutes = require('./routes/companiesRoutes');
+
+// Register the new routes
+app.use('/api/auth', authRoutes);
+app.use('/api/companies', companiesRoutes);
+
+// Make sure you have the images/companies directory
+const companiesDir = path.join(__dirname, 'images', 'companies');
+if (!fs.existsSync(companiesDir)) {
+  fs.mkdirSync(companiesDir, { recursive: true });
+}
 
 // Connect to MongoDB
 connectDB();
